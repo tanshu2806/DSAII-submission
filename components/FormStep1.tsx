@@ -70,12 +70,15 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
   };
 
   const handleEventTypeChange = (eventType: string) => {
+    const defaultSize = (eventType === "LoreQuest" || eventType === "Innovex") ? 2 : 1;
+    const defaultMembers = Array.from({ length: defaultSize }, () => ({ name: "", contact: "", email: "" }));
     setFormData({
       ...formData,
       eventType,
       gameType: "",
-      teamSize: "1",
-      members: [{ name: "", contact: "", email: "" }],
+      gameMode: "",
+      teamSize: defaultSize.toString(),
+      members: defaultMembers,
     });
     setErrors({});
   };
