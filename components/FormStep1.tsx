@@ -134,7 +134,7 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
   const getTeamSizeOptions = (eventType: string) => {
     if (eventType === "Contentflux" || eventType === "Geovoyager") return ["1", "2"];
     if (eventType === "LoreQuest" || eventType === "Innovex")
-      return ["1", "2", "3", "4"];
+      return ["2", "3", "4"];
     return ["1"];
   };
 
