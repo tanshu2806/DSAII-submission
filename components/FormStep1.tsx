@@ -21,6 +21,7 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -70,7 +71,9 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
   };
 
   const handleEventTypeChange = (eventType: string) => {
-    const defaultSize = (eventType === "LoreQuest" || eventType === "Innovex") ? 2 : 1;
+    const defaultSize =
+      eventType === "LoreQuest" || eventType === "Innovex" ? 2 :
+      eventType === "Contentflux" || eventType === "Geovoyager" ? 2 : 1;
     const defaultMembers = Array.from({ length: defaultSize }, () => ({ name: "", contact: "", email: "" }));
     setFormData({
       ...formData,
@@ -135,7 +138,6 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
   };
 
   const getTeamSizeOptions = (eventType: string) => {
-    if (eventType === "Contentflux" || eventType === "Geovoyager") return ["1", "2"];
     if (eventType === "LoreQuest" || eventType === "Innovex")
       return ["2", "3", "4"];
     return ["1"];
@@ -144,9 +146,10 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/submit-form", {
@@ -156,7 +159,6 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
       });
 
       if (response.ok) {
-        // Pass the captain's info to the next step
         onNext({
           name: formData.members[0].name,
           contact: formData.members[0].contact,
@@ -164,9 +166,11 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
         });
       } else {
         setErrors({ form: "Failed to submit form" });
+        setIsSubmitting(false);
       }
     } catch (error) {
       setErrors({ form: "An error occurred. Please try again." });
+      setIsSubmitting(false);
     }
   };
 
@@ -348,7 +352,9 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
           (formData.gameType &&
             (formData.gameType === "Valorant" || formData.gameMode))) && (
           <>
-            {formData.eventType !== "Battle grid" && (
+            {formData.eventType !== "Battle grid" &&
+              formData.eventType !== "Contentflux" &&
+              formData.eventType !== "Geovoyager" && (
               <motion.div variants={itemVariants} className="mb-6">
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
                   Team Size
@@ -469,13 +475,21 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
         <Button
           type="submit"
           disabled={
-            isLoading ||
+            isSubmitting ||
             !formData.eventType ||
             (formData.eventType === "Battle grid" && !formData.gameType)
           }
           className="w-full bg-zinc-50 text-zinc-950 hover:bg-zinc-200 font-semibold h-12 rounded-lg transition-colors disabled:opacity-50"
         >
-          {isLoading ? "Submitting..." : "Continue to Payment"}
+          {isSubmitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+              </svg>
+              Submitting...
+            </span>
+          ) : "Continue to Payment"}
         </Button>
       </motion.div>
     </motion.form>
