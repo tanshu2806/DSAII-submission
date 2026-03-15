@@ -132,8 +132,9 @@ export function FormContainer() {
             <FormStep1 onNext={handleStep1Next} isLoading={isLoading} />
           )}
           {step === 'step2' && (
-            <FormStep2
+          <FormStep2
               email={formData.members[0].email}
+              eventType={formData.eventType}
               onBack={handleStep2Back}
               onComplete={handleStep2Complete}
               isLoading={isLoading}

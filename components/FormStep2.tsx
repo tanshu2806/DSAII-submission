@@ -7,12 +7,17 @@ import Image from 'next/image';
 
 interface FormStep2Props {
   email: string;
+  eventType: string;
   onBack: () => void;
   onComplete: () => void;
   isLoading: boolean;
 }
 
-export function FormStep2({ email, onBack, onComplete, isLoading }: FormStep2Props) {
+// Events that use Payment_SS1; all others use Payment_SS2
+const SS1_EVENTS = new Set(['Battle grid', 'Geovoyager']);
+
+export function FormStep2({ email, eventType, onBack, onComplete, isLoading }: FormStep2Props) {
+  const qrImage = SS1_EVENTS.has(eventType) ? '/Payment_SS1.jpeg' : '/Payment_SS2.jpeg';
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string>('');
@@ -134,11 +139,15 @@ export function FormStep2({ email, onBack, onComplete, isLoading }: FormStep2Pro
       )}
 
       <motion.div variants={itemVariants} className="mb-6 flex flex-col items-center">
-        <p className="text-zinc-400 text-sm mb-3">Scan the QR code below to make your payment</p>
+        <p className="text-zinc-400 text-sm mb-1">Scan the QR code below to make your payment</p>
+        {eventType && (
+          <p className="text-zinc-500 text-xs mb-3">Event: <span className="text-zinc-300 font-medium">{eventType}</span></p>
+        )}
         <div className="relative w-56 h-56 rounded-xl overflow-hidden border border-zinc-700 shadow-lg">
           <Image
-            src="/PaymentSS.jpeg?v=2"
-            alt="Payment QR Code"
+            key={qrImage}
+            src={qrImage}
+            alt={`Payment QR Code for ${eventType}`}
             fill
             className="object-contain bg-white"
           />
