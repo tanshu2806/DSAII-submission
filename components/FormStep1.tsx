@@ -72,7 +72,7 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
 
   const handleEventTypeChange = (eventType: string) => {
     const defaultSize =
-      eventType === "LoreQuest" || eventType === "Innovex" ? 2 :
+      eventType === "CineQuest" || eventType === "Innovex" ? 2 :
       eventType === "Contentflux" || eventType === "Geovoyager" ? 2 : 1;
     const defaultMembers = Array.from({ length: defaultSize }, () => ({ name: "", contact: "", email: "" }));
     setFormData({
@@ -138,7 +138,7 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
   };
 
   const getTeamSizeOptions = (eventType: string) => {
-    if (eventType === "LoreQuest" || eventType === "Innovex")
+    if (eventType === "CineQuest" || eventType === "Innovex")
       return ["2", "3", "4"];
     return ["1"];
   };
@@ -227,8 +227,8 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
           <option value="" disabled className="bg-zinc-900 text-zinc-500">
             Select Event Type
           </option>
-          <option value="LoreQuest" className="bg-zinc-900 text-zinc-50">
-            LoreQuest
+          <option value="CineQuest" className="bg-zinc-900 text-zinc-50">
+            CineQuest
           </option>
           <option value="Innovex" className="bg-zinc-900 text-zinc-50">
             Innovex

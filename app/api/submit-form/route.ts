@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     // Map event type to the exact tab name in Google Sheets
     let sheetName = '';
-    if (eventType === 'LoreQuest') sheetName = 'LoreQuest';
+    if (eventType === 'CineQuest') sheetName = 'CineQuest';
     else if (eventType === 'Innovex') sheetName = 'Innovex';
     else if (eventType === 'Contentflux') sheetName = 'Contentflux';
     else if (eventType === 'Geovoyager') sheetName = 'Geovoyager';
