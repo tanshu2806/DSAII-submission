@@ -46,6 +46,59 @@ export async function appendToSheet(
   return result.data;
 }
 
+// Finds the row where the captain email matches (column F = index 5),
+// then writes Transaction ID to column Q and Screenshot URL to column R.
+// Column layout per user's sheet:
+// A=Timestamp, B=EventType, C=College, D=TeamSize,
+// E=M1Name, F=M1Email, G=M1Contact, H=M2Name ... P=M4Contact, Q=TransactionID, R=ScreenshotURL
+export async function updateRowWithPayment(
+  auth: any,
+  spreadsheetId: string,
+  sheetName: string,
+  captainEmail: string,
+  transactionId: string,
+  screenshotUrl: string
+): Promise<boolean> {
+  const sheets = google.sheets({ version: 'v4', auth });
+
+  // Read all data from the sheet
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: `${sheetName}!A:Z`,
+  });
+
+  const rows = response.data.values || [];
+
+  // Find the last row where captain email matches (column F = index 5)
+  let targetRowIndex = -1;
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i][5] === captainEmail) {
+      targetRowIndex = i; // keep going — match the most recent entry
+    }
+  }
+
+  if (targetRowIndex === -1) {
+    console.warn(`⚠️ No row found for email: ${captainEmail} in sheet: ${sheetName}`);
+    return false;
+  }
+
+  // Write Transaction ID to column Q (17th col) and Screenshot URL to column R (18th col)
+  // This matches the fixed header: ...M4Contact | Transaction ID | Screenshot
+  const cellRange = `${sheetName}!Q${targetRowIndex + 1}:R${targetRowIndex + 1}`;
+
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: cellRange,
+    valueInputOption: 'USER_ENTERED',
+    requestBody: {
+      values: [[transactionId, screenshotUrl]],
+    },
+  });
+
+  return true;
+}
+
+
 export async function uploadFileToDrive(
   auth: any,
   fileBuffer: Buffer,

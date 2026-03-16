@@ -6,7 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface FormStep1Props {
-  onNext: (data: { name: string; contact: string; email: string }) => void;
+  onNext: (data: {
+    name: string;
+    contact: string;
+    email: string;
+    eventType: string;
+    gameType: string;
+    gameMode: string;
+    teamSize: string;
+    collegeName: string;
+  }) => void;
   isLoading: boolean;
 }
 
@@ -163,6 +172,11 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
           name: formData.members[0].name,
           contact: formData.members[0].contact,
           email: formData.members[0].email,
+          eventType: formData.eventType,
+          gameType: formData.gameType,
+          gameMode: formData.gameMode,
+          teamSize: formData.teamSize,
+          collegeName: formData.collegeName,
         });
       } else {
         setErrors({ form: "Failed to submit form" });

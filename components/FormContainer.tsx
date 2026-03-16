@@ -10,13 +10,17 @@ type Step = 'step1' | 'step2' | 'success';
 
 export function FormContainer() {
   const [step, setStep] = useState<Step>('step1');
-  const [formData, setFormData] = useState({ eventType: '', teamSize: '1', collegeName: '', members: [{ name: '', contact: '', email: '' }] });
+  const [formData, setFormData] = useState({ eventType: '', gameType: '', gameMode: '', teamSize: '1', collegeName: '', members: [{ name: '', contact: '', email: '' }] });
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleStep1Next = (data: { name: string; contact: string; email: string }) => {
-    // We only need the captain's email for the screenshot step
+  const handleStep1Next = (data: { name: string; contact: string; email: string; eventType: string; gameType: string; gameMode: string; teamSize: string; collegeName: string }) => {
     setFormData((prev) => ({
       ...prev,
+      eventType: data.eventType,
+      gameType: data.gameType,
+      gameMode: data.gameMode,
+      teamSize: data.teamSize,
+      collegeName: data.collegeName,
       members: [{ name: data.name, contact: data.contact, email: data.email }, ...prev.members.slice(1)]
     }));
     setStep('step2');
@@ -32,7 +36,7 @@ export function FormContainer() {
 
   const handleReset = () => {
     setStep('step1');
-    setFormData({ eventType: '', teamSize: '1', collegeName: '', members: [{ name: '', contact: '', email: '' }] });
+    setFormData({ eventType: '', gameType: '', gameMode: '', teamSize: '1', collegeName: '', members: [{ name: '', contact: '', email: '' }] });
   };
 
   const progressVariants = {
@@ -135,6 +139,10 @@ export function FormContainer() {
           <FormStep2
               email={formData.members[0].email}
               eventType={formData.eventType}
+              gameType={formData.gameType}
+              gameMode={formData.gameMode}
+              teamSize={formData.teamSize}
+              captainName={formData.members[0].name}
               onBack={handleStep2Back}
               onComplete={handleStep2Complete}
               isLoading={isLoading}

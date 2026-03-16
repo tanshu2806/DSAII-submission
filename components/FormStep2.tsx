@@ -8,16 +8,38 @@ import Image from 'next/image';
 interface FormStep2Props {
   email: string;
   eventType: string;
+  gameType?: string;
+  gameMode?: string;
+  teamSize?: string;
+  captainName?: string;
   onBack: () => void;
   onComplete: () => void;
   isLoading: boolean;
 }
 
+// Entry fee lookup based on event, game, and mode
+function getEntryFee(eventType: string, gameType?: string, gameMode?: string): string {
+  if (eventType === 'Battle grid') {
+    if (gameType === 'Valorant') return '₹250';
+    if (gameType === 'BGMI' || gameType === 'Free Fire') {
+      if (gameMode === 'Squad') return '₹200';
+      if (gameMode === 'Duo') return '₹120';
+    }
+    return '—';
+  }
+  if (eventType === 'Innovex') return '₹399 per team';
+  if (eventType === 'CineQuest') return '₹299 per team';
+  if (eventType === 'Geovoyager') return '₹149 per team';
+  if (eventType === 'Contentflux') return '₹149 per team';
+  return '—';
+}
+
 // Events that use Payment_SS1; all others use Payment_SS2
 const SS1_EVENTS = new Set(['Battle grid', 'Geovoyager']);
 
-export function FormStep2({ email, eventType, onBack, onComplete, isLoading }: FormStep2Props) {
+export function FormStep2({ email, eventType, gameType, gameMode, teamSize, captainName, onBack, onComplete, isLoading }: FormStep2Props) {
   const qrImage = SS1_EVENTS.has(eventType) ? '/Payment_SS1.jpeg' : '/Payment_SS2.jpeg';
+  const entryFee = getEntryFee(eventType, gameType, gameMode);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string>('');
@@ -84,6 +106,7 @@ export function FormStep2({ email, eventType, onBack, onComplete, isLoading }: F
       formData.append('file', file);
       formData.append('email', email);
       formData.append('transactionId', transactionId.trim());
+      formData.append('eventType', eventType);
 
       const response = await fetch('/api/upload-screenshot', {
         method: 'POST',
@@ -144,6 +167,39 @@ export function FormStep2({ email, eventType, onBack, onComplete, isLoading }: F
           {error}
         </motion.div>
       )}
+
+      {/* Registration summary card */}
+      <motion.div variants={itemVariants} className="mb-6 p-4 bg-zinc-900 border border-zinc-800 rounded-xl">
+        <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-3">Registration Summary</h3>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-zinc-500 text-sm">Event</span>
+            <span className="text-zinc-200 text-sm font-medium">{eventType}</span>
+          </div>
+          {gameType && (
+            <div className="flex justify-between items-center">
+              <span className="text-zinc-500 text-sm">Game</span>
+              <span className="text-zinc-200 text-sm font-medium">{gameType}</span>
+            </div>
+          )}
+          {teamSize && (
+            <div className="flex justify-between items-center">
+              <span className="text-zinc-500 text-sm">Team Size</span>
+              <span className="text-zinc-200 text-sm font-medium">{teamSize} {Number(teamSize) === 1 ? 'Player' : 'Players'}</span>
+            </div>
+          )}
+          {captainName && (
+            <div className="flex justify-between items-center">
+              <span className="text-zinc-500 text-sm">Captain</span>
+              <span className="text-zinc-200 text-sm font-medium">{captainName}</span>
+            </div>
+          )}
+          <div className="flex justify-between items-center pt-2 border-t border-zinc-800 mt-1">
+            <span className="text-zinc-400 text-sm font-semibold">Entry Fee</span>
+            <span className="text-green-400 text-sm font-bold">{entryFee}</span>
+          </div>
+        </div>
+      </motion.div>
 
       <motion.div variants={itemVariants} className="mb-6 flex flex-col items-center">
         <p className="text-zinc-400 text-sm mb-1">Scan the QR code below to make your payment</p>
