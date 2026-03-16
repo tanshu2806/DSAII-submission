@@ -148,7 +148,16 @@ export function FormContainer() {
               isLoading={isLoading}
             />
           )}
-          {step === 'success' && <SuccessScreen onReset={handleReset} />}
+          {step === 'success' && (
+            <SuccessScreen
+              onReset={handleReset}
+              eventType={formData.eventType}
+              gameType={formData.gameType}
+              gameMode={formData.gameMode}
+              teamSize={formData.teamSize}
+              captainName={formData.members[0].name}
+            />
+          )}
         </motion.div>
       </motion.div>
     </div>
