@@ -5,6 +5,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const email = formData.get('email') as string;
+    const transactionId = formData.get('transactionId') as string;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -12,6 +13,10 @@ export async function POST(request: NextRequest) {
 
     if (!email) {
       return NextResponse.json({ error: 'Email not provided' }, { status: 400 });
+    }
+
+    if (!transactionId) {
+      return NextResponse.json({ error: 'Transaction ID not provided' }, { status: 400 });
     }
 
     const apiKey = process.env.IMGBB_API_KEY;
@@ -46,6 +51,7 @@ export async function POST(request: NextRequest) {
       message: 'Screenshot uploaded successfully',
       fileLink: result.data.url,
       deleteLink: result.data.delete_url,
+      transactionId,
     });
   } catch (error) {
     console.error('Upload error:', error);

@@ -21,6 +21,7 @@ export function FormStep2({ email, eventType, onBack, onComplete, isLoading }: F
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string>('');
+  const [transactionId, setTransactionId] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -68,6 +69,11 @@ export function FormStep2({ email, eventType, onBack, onComplete, isLoading }: F
       return;
     }
 
+    if (!transactionId.trim()) {
+      setError('Please enter your Transaction ID');
+      return;
+    }
+
     if (isUploading) return;
 
     setIsUploading(true);
@@ -77,6 +83,7 @@ export function FormStep2({ email, eventType, onBack, onComplete, isLoading }: F
       const formData = new FormData();
       formData.append('file', file);
       formData.append('email', email);
+      formData.append('transactionId', transactionId.trim());
 
       const response = await fetch('/api/upload-screenshot', {
         method: 'POST',
@@ -152,6 +159,22 @@ export function FormStep2({ email, eventType, onBack, onComplete, isLoading }: F
             className="object-contain bg-white"
           />
         </div>
+      </motion.div>
+
+      <motion.div variants={itemVariants} className="mb-6">
+        <label className="block text-sm font-medium text-zinc-300 mb-2">
+          Transaction ID
+        </label>
+        <input
+          type="text"
+          placeholder="Enter your payment Transaction ID"
+          value={transactionId}
+          onChange={(e) => setTransactionId(e.target.value)}
+          className="w-full h-12 px-4 py-2 bg-zinc-900 border border-zinc-700 text-zinc-50 rounded-lg placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-zinc-500"
+        />
+        <p className="text-zinc-600 text-xs mt-1">
+          Enter the UTR / Transaction reference number from your payment app
+        </p>
       </motion.div>
 
       <motion.div
