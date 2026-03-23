@@ -19,14 +19,7 @@ interface FormStep2Props {
 
 // Entry fee lookup based on event, game, and mode
 function getEntryFee(eventType: string, gameType?: string, gameMode?: string): string {
-  if (eventType === 'Battle grid') {
-    if (gameType === 'Valorant') return '₹250';
-    if (gameType === 'BGMI' || gameType === 'Free Fire') {
-      if (gameMode === 'Squad') return '₹200';
-      if (gameMode === 'Duo') return '₹120';
-    }
-    return '—';
-  }
+  if (eventType === 'The Spiral') return '₹299 per team';
   if (eventType === 'Innovex') return '₹399 per team';
   if (eventType === 'CineQuest') return '₹299 per team';
   if (eventType === 'Geovoyager') return '₹149 per team';
@@ -35,7 +28,7 @@ function getEntryFee(eventType: string, gameType?: string, gameMode?: string): s
 }
 
 // Events that use Payment_SS1; all others use Payment_SS2
-const SS1_EVENTS = new Set(['Battle grid', 'Geovoyager']);
+const SS1_EVENTS = new Set(['The Spiral', 'Geovoyager']);
 
 export function FormStep2({ email, eventType, gameType, gameMode, teamSize, captainName, onBack, onComplete, isLoading }: FormStep2Props) {
   const qrImage = SS1_EVENTS.has(eventType) ? '/Payment_SS1.jpeg' : '/Payment_SS2.jpeg';

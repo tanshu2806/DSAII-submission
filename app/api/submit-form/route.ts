@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     else if (eventType === 'Innovex') sheetName = 'Innovex';
     else if (eventType === 'Contentflux') sheetName = 'Contentflux';
     else if (eventType === 'Geovoyager') sheetName = 'Geovoyager';
-    else if (eventType === 'Battle grid') sheetName = 'BattleGrind';
+    else if (eventType === 'The Spiral') sheetName = 'TheSpiral';
 
     if (!sheetName) {
       return NextResponse.json(
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Flatten array: [Event Type, Game (if any), College Name, Team Size, Captain Name, Captain Email, Captain Contact, Member 2 Name...]
+    // Flatten array: [Event Type, College Name, Team Size, Captain Name, Captain Email, Captain Contact, Member 2 Name...]
     const displayEventType = gameType ? `${eventType} - ${gameType}` : eventType;
     const values = [
       timestamp,
@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
       teamSize,
     ];
 
-    // Add up to 5 members for Battle grid, 4 for others
-    const maxMembers = eventType === 'Battle grid' ? 5 : 4;
+    // Max 4 members for all events
+    const maxMembers = 4;
     for (let i = 0; i < maxMembers; i++) {
       if (i < members.length) {
         values.push(members[i].name, members[i].email, members[i].contact);

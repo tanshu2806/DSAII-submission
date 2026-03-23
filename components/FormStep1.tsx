@@ -36,10 +36,6 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
     const newErrors: Record<string, string> = {};
 
     if (!formData.eventType) newErrors.eventType = "Event Type is required";
-    if (formData.eventType === "Battle grid" && !formData.gameType)
-      newErrors.gameType = "Game selection is required";
-    if (formData.eventType === "Battle grid" && formData.gameType && formData.gameType !== "Valorant" && !formData.gameMode)
-      newErrors.gameMode = "Please select Duo or Squad";
     if (!formData.collegeName.trim())
       newErrors.collegeName = "College Name is required";
 
@@ -82,7 +78,8 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
   const handleEventTypeChange = (eventType: string) => {
     const defaultSize =
       eventType === "CineQuest" || eventType === "Innovex" ? 2 :
-      eventType === "Contentflux" || eventType === "Geovoyager" ? 2 : 1;
+      eventType === "Contentflux" || eventType === "Geovoyager" ? 2 :
+      eventType === "The Spiral" ? 2 : 1;
     const defaultMembers = Array.from({ length: defaultSize }, () => ({ name: "", contact: "", email: "" }));
     setFormData({
       ...formData,
@@ -147,7 +144,7 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
   };
 
   const getTeamSizeOptions = (eventType: string) => {
-    if (eventType === "CineQuest" || eventType === "Innovex")
+    if (eventType === "CineQuest" || eventType === "Innovex" || eventType === "The Spiral")
       return ["2", "3", "4"];
     return ["1"];
   };
@@ -256,8 +253,8 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
           <option value="Geovoyager" className="bg-zinc-900 text-zinc-50">
             Geovoyager
           </option>
-          <option value="Battle grid" className="bg-zinc-900 text-zinc-50">
-            Battle grid
+          <option value="The Spiral" className="bg-zinc-900 text-zinc-50">
+            The Spiral
           </option>
         </select>
         {/* Custom arrow icon since appearance-none hides the default one */}
@@ -281,93 +278,9 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
         )}
       </motion.div>
 
-      {formData.eventType === "Battle grid" && (
-        <motion.div variants={itemVariants} className="mb-6 relative z-40">
-          <label className="block text-sm font-medium text-zinc-300 mb-2">
-            Game
-          </label>
-          <select
-            value={formData.gameType}
-            onChange={(e) => handleGameTypeChange(e.target.value)}
-            className="w-full h-12 px-4 py-2 bg-zinc-900 border border-zinc-700 text-zinc-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500 appearance-none cursor-pointer"
-          >
-            <option value="" disabled className="bg-zinc-900 text-zinc-500">
-              Select Game
-            </option>
-            <option value="FreeFire" className="bg-zinc-900 text-zinc-50">
-              FreeFire
-            </option>
-            <option value="Valorant" className="bg-zinc-900 text-zinc-50">
-              Valorant
-            </option>
-            <option value="BGMI" className="bg-zinc-900 text-zinc-50">
-              BGMI
-            </option>
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 top-7 flex items-center px-4 text-zinc-400">
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </div>
-          {!formData.gameType && formData.eventType === "Battle grid" && (
-            <p className="text-red-400 text-sm mt-2">
-              Game selection is required
-            </p>
-          )}
-        </motion.div>
-      )}
-
-      {/* Duo / Squad mode — only for FreeFire and BGMI */}
-      {formData.eventType === "Battle grid" &&
-        formData.gameType &&
-        formData.gameType !== "Valorant" && (
-          <motion.div variants={itemVariants} className="mb-6 relative z-30">
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
-              Mode
-            </label>
-            <select
-              value={formData.gameMode}
-              onChange={(e) => handleGameModeChange(e.target.value)}
-              className="w-full h-12 px-4 py-2 bg-zinc-900 border border-zinc-700 text-zinc-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-500 appearance-none cursor-pointer"
-            >
-              <option value="" disabled className="bg-zinc-900 text-zinc-500">
-                Select Mode
-              </option>
-              <option value="Duo" className="bg-zinc-900 text-zinc-50">
-                Duo (2 members)
-              </option>
-              <option value="Squad" className="bg-zinc-900 text-zinc-50">
-                Squad (4 members)
-              </option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 top-7 flex items-center px-4 text-zinc-400">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-            {errors.gameMode && (
-              <p className="text-red-400 text-sm mt-2">{errors.gameMode}</p>
-            )}
-          </motion.div>
-        )}
-
-      {formData.eventType &&
-        (formData.eventType !== "Battle grid" ||
-          (formData.gameType &&
-            (formData.gameType === "Valorant" || formData.gameMode))) && (
+      {formData.eventType && (
           <>
-            {formData.eventType !== "Battle grid" &&
-              formData.eventType !== "Contentflux" &&
+            {formData.eventType !== "Contentflux" &&
               formData.eventType !== "Geovoyager" && (
               <motion.div variants={itemVariants} className="mb-6">
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
@@ -490,8 +403,7 @@ export function FormStep1({ onNext, isLoading }: FormStep1Props) {
           type="submit"
           disabled={
             isSubmitting ||
-            !formData.eventType ||
-            (formData.eventType === "Battle grid" && !formData.gameType)
+            !formData.eventType
           }
           className="w-full bg-zinc-50 text-zinc-950 hover:bg-zinc-200 font-semibold h-12 rounded-lg transition-colors disabled:opacity-50"
         >

@@ -7,9 +7,7 @@ const EVENT_SHEET_MAP: Record<string, string> = {
   'Innovex': 'Innovex',
   'Contentflux': 'Contentflux',
   'Geovoyager': 'Geovoyager',
-  'Battle grid': 'BattleGrind',
-  'Hackathon': 'Hackathon',
-  'Fandom': 'Fandom',
+  'The Spiral': 'TheSpiral',
 };
 
 export async function POST(request: NextRequest) {
@@ -100,4 +98,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to upload screenshot' }, { status: 500 });
   }
 }
-
